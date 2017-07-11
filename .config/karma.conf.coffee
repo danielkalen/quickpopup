@@ -5,7 +5,7 @@ module.exports = (config)-> config.set
 	basePath: '../'
 	client: captureConsole: true unless process.env.sauce
 	browserConsoleLogOptions: level:'log', terminal:true
-	frameworks: ['mocha', 'chai']
+	frameworks: ['mocha']
 	files: [
 		LIB_FILE
 		'node_modules/bluebird/js/browser/bluebird.js'

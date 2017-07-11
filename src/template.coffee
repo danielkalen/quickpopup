@@ -13,8 +13,10 @@ export default DOM.template(
 			minHeight: '100%'
 			visibility: 'hidden'
 			overflow: 'hidden'
+			transition: (popup)-> "all 0.001s linear #{popup.settings.animation+1}ms"
 			
 			$open:
+				transition: 'all 0.001s linear 0s'
 				visibility: 'visible'
 				overflow: 'visible'
 				height: 'auto'
@@ -72,7 +74,7 @@ export default DOM.template(
 				placement: (placement)-> @state "#{placement}Placement", on
 				content: (content)-> @append(content) if content
 
-			events: 'stateChange:visible', (visible)->
+			events: 'stateChange:visible': (visible)->
 				if visible and DOM(@).related.settings.placement is 'center'
 					DOM(@).related.alignToCenter()
 
@@ -114,3 +116,9 @@ export bodyWrapper = DOM.template(
 	]
 )
 
+
+export html = DOM.template(
+	['div'
+		computers: html: (html)-> @html = html
+	]
+)

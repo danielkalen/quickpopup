@@ -29,7 +29,7 @@ Generates and returns a new Popup instance for the provided settings.
   - [QuickDOM](https://github.com/danielkalen/quickdom) element
   - settings object
 
-view default settings below
+[view default settings below](#quickpopupdefaults)
 
 ### `QuickPopup.version`
 The version of this release.
@@ -56,13 +56,13 @@ Array containing all active popup instances.
     - `size` - width/height of close button in pixels *(default: 22)*
 
 
-### `popupInstance.open()`
+### `popup.open()`
 Opens/reveals the popup element.
 
-### `popupInstance.close()`
+### `popup.close()`
 Closes/hides the popup element.
 
-### `popupInstance.destroy()`
+### `popup.destroy()`
 Removes the popup element from the DOM & destroys the popup instance.
 
 

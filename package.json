@@ -28,7 +28,8 @@
     "postpublish": "git push",
     "watch": "cake -d watch",
     "build": "cake -d build && cake build && cake measure && cp -r build/* dist/",
-    "test": "npm run test:node -s && npm run test:browser -s && npm run test:minified -s",
+    "test": "npm run test:browser -s || true",
+    "test:travis": "npm run test:browser -s && npm run test:minified -s",
     "test:node": "cake install:test; mocha -u tdd --compilers coffee:coffee-register test/node.coffee",
     "test:browser": "cake install:karma; karma start --single-run --browsers Electron .config/karma.conf.coffee",
     "test:browser:local": "cake install:test; open test/testrunner.html",
@@ -51,6 +52,8 @@
   },
   "homepage": "https://github.com/danielkalen/quickpopup#readme",
   "dependencies": {
+    "@danielkalen/is": "^2.0.0",
+    "detect-animation-end-helper": "^0.1.0",
     "event-lite": "^0.1.1",
     "quickdom": "^1.0.48",
     "smart-extend": "^1.6.0"

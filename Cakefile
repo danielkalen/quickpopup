@@ -9,8 +9,8 @@ Path = require 'path'
 process.env.SOURCE_MAPS ?= 1
 buildModules = ['google-closure-compiler-js','uglify-js@3.0.24']
 coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage', 'request']
-testModules = ['@danielkalen/polyfills', 'chai', 'mocha', 'sinon']
-karmaModules = ['request', 'electron', 'karma@1.6.0', 'karma-chai', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
+testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
+karmaModules = ['request', 'electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
 karmaModules = testModules.concat(karmaModules)
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
@@ -54,6 +54,7 @@ task 'watch:js', (options)->
 	global.silent = true
 	require('simplywatch')
 		globs: "src/*.coffee"
+		command: -> null
 		finalCommandDelay: 1
 		finalCommand: ()-> invoke 'build:js'
 
@@ -62,7 +63,7 @@ task 'watch:test', (options)->
 	global.silent = true
 	require('simplywatch')
 		globs: "test/*.coffee"
-		command: ()-> null
+		command: -> null
 		finalCommandDelay: 1
 		finalCommand: ()-> invoke 'build:test'
 
