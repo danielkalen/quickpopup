@@ -33,7 +33,8 @@ suite "QuickPopup", ()->
 			assert.equal typeof popup.emit, 'function'
 			Promise.delay().then ()-> popup.emit 'someEvent'
 			expect(popup).to.emit 'someEvent'
-		
+
+
 		suite "args", ()->
 			test "using no args", ()->
 				popup = Popup()
@@ -42,28 +43,60 @@ suite "QuickPopup", ()->
 				assert.equal typeof popup, 'object'
 				assert.equal typeof popup.open, 'function'
 				assert.equal popup.el.text, ''
-			
+
+
 			test "with string arg", ()->
 				popup = Popup('provided string')
-				assert.equal typeof popup, 'object'
-				assert.equal typeof popup.open, 'function'
-				console.log popup.el.child.content.children
 				assert.equal popup.el.text, 'provided string'
-			
+
+
 			test "with html string arg", ()->
-				popup = Popup('<b class="theBoldOne">provided string</b> <i class="theSlantedOne">is slanted</b>')
-				assert.equal typeof popup, 'object'
-				assert.equal typeof popup.open, 'function'
+				popup = Popup('<b class="theBoldOne">provided string</b><i class="theSlantedOne"> is slanted</b>')
 				assert.equal popup.el.text, 'provided string is slanted'
 				
 				contents = popup.el.child.content.children[1].children
 				assert.equal contents.length, 2
 				assert.equal contents[0].type, 'b'
-				assert.equal contents[1].type, 'span'
+				assert.equal contents[1].type, 'i'
 				assert.equal contents[0].raw.className, 'theBoldOne'
-				assert.equal contents[1].raw.className, 'theSkinnyOne'
+				assert.equal contents[1].raw.className, 'theSlantedOne'
 
-			# test ""
+
+			test "with DOM element arg", ()->
+				span = DOM.span(class:'abc123-child', 'provided el')
+				div = DOM.div(class:'abc123', span)
+				popup = Popup(div.raw)
+				assert.equal popup.el.text, 'provided el'
+				
+				contents = popup.el.child.content.children.slice(1)
+				assert.equal contents.length, 1
+				assert.equal contents[0].type, 'div'
+				assert.equal contents[0].raw.className, 'abc123'
+				assert.equal contents[0], div
+				assert.equal contents[0].children[0], span
+
+
+			test "with QuickDOM element arg", ()->
+				span = DOM.span(class:'abc123-child', 'provided el')
+				div = DOM.div(class:'abc123', span)
+				popup = Popup(div)
+				assert.equal popup.el.text, 'provided el'
+				
+				contents = popup.el.child.content.children.slice(1)
+				assert.equal contents.length, 1
+				assert.equal contents[0].type, 'div'
+				assert.equal contents[0].raw.className, 'abc123'
+				assert.equal contents[0], div
+				assert.equal contents[0].children[0], span
+
+
+			test "with settings arg", ()->
+				popupA = Popup({})
+				popupB = Popup({placement:'bottom'})
+								
+				assert.equal popupA.settings.placement, 'center'
+				assert.equal popupB.settings.placement, 'bottom'
+
 
 
 

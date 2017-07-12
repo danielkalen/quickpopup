@@ -55,8 +55,8 @@
     "@danielkalen/is": "^2.0.0",
     "detect-animation-end-helper": "^0.1.0",
     "event-lite": "^0.1.1",
-    "quickdom": "^1.0.48",
-    "smart-extend": "^1.6.0"
+    "quickdom": "^1.0.50",
+    "smart-extend": "^1.7.2"
   },
   "devDependencies": {
     "bluebird": "^3.5.0",
@@ -65,7 +65,7 @@
     "fs-jetpack": "^0.13.3",
     "promise-break": "^0.1.1",
     "semver": "^5.3.0",
-    "simplyimport": "^4.0.0-s4",
+    "simplyimport": "^4.0.0-s7",
     "simplywatch": "^3.0.0-l2"
   }
 }

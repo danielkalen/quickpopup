@@ -25,7 +25,7 @@ class Popup extends require('event-lite')
 		@id = Math.round(Math.random()*1e5).toString(16)
 		@state = open:false, destroyed:false, offset:0, count:0
 		@content = DOM(@settings.content) if @settings.content
-		@el = template.spawn({data:@content, placement:@settings.placement}, relatedInstance:@)
+		@el = template.spawn({data:{@content}, placement:@settings.placement}, relatedInstance:@)
 
 		super
 		Popup.instances.push(@)
@@ -107,14 +107,14 @@ class Popup extends require('event-lite')
 
 
 	setContent: (target)->
-		newContent = switch
+		@content = switch
 			when IS.quickEl(target) then target
 			when IS.domEl(target) then DOM(target)
 			when IS.template(target) then target.spawn()
 			when IS.string(target) then htmlTemplate.spawn(data:html:target)
 			else throw new Error('invalid target provided to Popup::setContent()')
 		
-		@el.child.content.children[1].replaceWith newContent
+		@el.child.content.children[1].replaceWith @content
 
 
 	alignToCenter: ()->

@@ -54,9 +54,7 @@ task 'watch:js', (options)->
 	global.silent = true
 	require('simplywatch')
 		globs: "src/*.coffee"
-		command: -> null
-		finalCommandDelay: 1
-		finalCommand: ()-> invoke 'build:js'
+		command: -> invoke 'build:js'
 
 
 task 'watch:test', (options)->

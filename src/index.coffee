@@ -17,8 +17,8 @@ QuickPopup = (arg)->
 		when DOM.isTemplate(args[0])
 			new Popup content:args[0].spawn()
 
-		when arg[0] and typeof arg[0] is 'object'
-			new Popup arg[0]
+		when args[0] and typeof args[0] is 'object'
+			new Popup args[0]
 
 		else throw new Error('invalid argument provided to QuickPopup')
 
