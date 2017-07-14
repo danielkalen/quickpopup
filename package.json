@@ -65,7 +65,7 @@
     "fs-jetpack": "^0.13.3",
     "promise-break": "^0.1.1",
     "semver": "^5.3.0",
-    "simplyimport": "^4.0.0-s7",
+    "simplyimport": "^4.0.0-s9",
     "simplywatch": "^3.0.0-l2"
   }
 }

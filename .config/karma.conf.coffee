@@ -47,6 +47,7 @@ module.exports = (config)-> config.set
 	sauceLabs: 
 		testName: 'QuickPopup Test Suite'
 		recordVideo: true
+		recordScreenshots: false
 		build: require('../package.json').version+'-'+Math.round(Math.random()*1e6).toString(16)
 		username: 'quickpopup'
 		accessKey: '8e15b554-ef7a-41b3-8e18-2778bcc6ae0d'

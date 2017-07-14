@@ -41,17 +41,17 @@ module.exports =
 	safari8:			device 'safari', 8
 	safari7:			device 'safari', 7
 	chrome_new_mac:		device 'chrome', 58, 'mac'
-	chrome_semi_mac:	device 'chrome', 40, 'mac'
-	chrome_old_mac:		device 'chrome', 31, 'mac'
-	chrome_new_win:		device 'chrome', 58, 'win'
+	# chrome_semi_mac:	device 'chrome', 40, 'mac'
+	# chrome_old_mac:		device 'chrome', 31, 'mac'
+	# chrome_new_win:		device 'chrome', 58, 'win'
 	chrome_semi_win:	device 'chrome', 40, 'win'
 	chrome_old_win:		device 'chrome', 30, 'win'
-	firefox_new_mac:	device 'firefox', 53, 'mac'
+	# firefox_new_mac:	device 'firefox', 53, 'mac'
 	firefox_semi_mac:	device 'firefox', 40, 'mac'
 	firefox_old_mac:	device 'firefox', 30, 'mac'
 	firefox_new_win:	device 'firefox', 53, 'win'
-	firefox_semi_win:	device 'firefox', 40, 'win'
-	firefox_old_win:	device 'firefox', 30, 'win'
+	# firefox_semi_win:	device 'firefox', 40, 'win'
+	# firefox_old_win:	device 'firefox', 30, 'win'
 	edge14:				device 'edge', 14
 	edge13:				device 'edge', 13
 	ie11:				device 'ie', 11

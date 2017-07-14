@@ -19,6 +19,19 @@ class Popup extends require('event-lite')
 		@bodyWrapper.append(child) for child in bodyChildren
 		return
 
+	@unwrapBody: ()-> if @bodyWrapper
+		bodyChildren = @bodyWrapper.children.slice()
+		body.append(child) for child in bodyChildren
+		@bodyWrapper.remove()
+		@bodyWrapper = null
+
+	@destroyAll: ()->
+		instance.destroy() for instance in @instances
+		@unwrapBody()
+
+
+
+
 
 	constructor: (settings)->
 		@settings = helpers.extendSettings(defaults, settings)

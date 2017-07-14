@@ -26,6 +26,8 @@ suite "QuickPopup", ()->
 
 
 	suite "instance", ()->
+		test "should create a wrapper element around body contents", ()->
+		
 		test "should be an event emitter", ()->
 			popup = Popup()
 			assert.equal typeof popup.on, 'function'
