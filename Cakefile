@@ -1,7 +1,7 @@
 global.Promise = require 'bluebird'
 Promise.config longStackTraces:process.env.DEBUG?
 promiseBreak = require 'promise-break'
-spawn = require('child_process').spawn
+execa = require('execa')
 extend = require 'smart-extend'
 fs = require 'fs-jetpack'
 chalk = require 'chalk'
@@ -61,9 +61,7 @@ task 'watch:test', (options)->
 	global.silent = true
 	require('simplywatch')
 		globs: "test/*.coffee"
-		command: -> null
-		finalCommandDelay: 1
-		finalCommand: ()-> invoke 'build:test'
+		command: -> invoke 'build:test'
 
 
 
@@ -194,17 +192,15 @@ compileJS = (file, options)->
 
 
 
-installModules = (targetModules)-> new Promise (resolve, reject)->
+installModules = (targetModules)->
 	targetModules = targetModules
 		.filter (module)-> if typeof module is 'string' then true else module[1]()
 		.map (module)-> if typeof module is 'string' then module else module[0]
 	
-	return resolve() if not targetModules.length
+	return if not targetModules.length
 	console.log "#{chalk.yellow('Installing')} #{chalk.dim targetModules.join ', '}"
 	
-	install = spawn('npm', ['install', '--no-save', '--no-purne', targetModules...], {stdio:'inherit'})
-	install.on 'error', reject
-	install.on 'close', resolve
+	execa('npm', ['install', '--no-save', '--no-purne', targetModules...], {stdio:'inherit'})
 
 
 moduleInstalled = (targetModule)->
@@ -212,6 +208,9 @@ moduleInstalled = (targetModule)->
 	if (split=targetModule.split('@')) and split[0].length
 		targetModule = split[0]
 		targetVersion = split[1]
+
+	if /^github:.+?\//.test(targetModule)
+		targetModule = targetModule.replace /^github:.+?\//, ''
 	
 	pkgFile = Path.resolve('node_modules',targetModule,'package.json')
 	exists = fs.exists(pkgFile)
