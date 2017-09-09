@@ -1,19 +1,17 @@
 global.Promise = require 'bluebird'
 Promise.config longStackTraces:process.env.DEBUG?
-promiseBreak = require 'promise-break'
-execa = require('execa')
 extend = require 'smart-extend'
+packageInstall = require 'package-install'
 fs = require 'fs-jetpack'
 chalk = require 'chalk'
 Path = require 'path'
-process.env.SOURCE_MAPS ?= 1
-buildModules = ['google-closure-compiler-js','uglify-js@3.0.24']
-coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage', 'request']
-testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
-karmaModules = ['request', 'electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
-karmaModules = testModules.concat(karmaModules)
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
+process.env.SOURCE_MAPS ?= 1
+buildModules = ['simplyimport@4.0.0-s34','google-closure-compiler-js','uglify-js@3.0.24']
+coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage']
+testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
+karmaModules = ['electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
 
 option '-d', '--debug', 'run in debug mode'
 option '-t', '--target [target]', 'target measure dir'
@@ -21,7 +19,6 @@ option '-t', '--target [target]', 'target measure dir'
 
 task 'build', ()->
 	Promise.resolve()
-		.then ()-> invoke 'install:build'
 		.then ()-> invoke 'build:js'
 		.then ()-> invoke 'build:test'
 
@@ -29,12 +26,14 @@ task 'build', ()->
 task 'build:js', (options)->
 	debug = if options.debug then '.debug' else ''
 	Promise.resolve()
+		.then ()-> invoke 'install:build'
 		.then ()-> {src:"src/index.coffee", dest:"build/quickpopup#{debug}.js"}
 		.tap ()-> console.log 'compiling js' unless global.silent
 		.then (file)-> compileJS(file, debug:options.debug, umd:'quickpopup', target:'browser')
 
 task 'build:test', (options)->
 	Promise.resolve()
+		.then ()-> invoke 'install:build'
 		.then ()-> invoke 'install:test'
 		.tap ()-> console.log 'compiling test' unless global.silent
 		.then ()-> {src:"test/test.coffee", dest:"test/test.js"}
@@ -51,17 +50,11 @@ task 'watch', ()->
 			invoke 'watch:test'
 
 task 'watch:js', (options)->
-	global.silent = true
-	require('simplywatch')
-		globs: "src/*.coffee"
-		command: -> invoke 'build:js'
-
+	watch "src/*.coffee", -> invoke 'build:js'
 
 task 'watch:test', (options)->
-	global.silent = true
-	require('simplywatch')
-		globs: "test/*.coffee"
-		command: -> invoke 'build:test'
+	watch "test/*.coffee", -> invoke 'build:test'
+
 
 
 
@@ -72,53 +65,12 @@ task 'install', ()->
 		.then ()-> invoke 'install:coverage'
 		.then ()-> invoke 'install:bench'
 
-
-task 'install:build', ()->
-	Promise.resolve()
-		.then ()-> buildModules.filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
-
-
-task 'install:watch', ()->
-	Promise.resolve()
-		.then ()-> ['listr'].filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
-
-
-task 'install:test', ()->
-	Promise.resolve()
-		.then ()-> testModules.filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
-
-
-task 'install:karma', ()->
-	Promise.resolve()
-		.then ()-> karmaModules.filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
-
-
-task 'install:coverage', ()->
-	Promise.resolve()
-		.then ()-> coverageModules.filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
-
-
-task 'install:measure', ()->
-	Promise.resolve()
-		.then ()-> ['gzipped', 'sugar'].filter (module)-> not moduleInstalled(module)
-		.tap (missingModules)-> promiseBreak() if missingModules.length is 0
-		.tap (missingModules)-> installModules(missingModules)
-		.catch promiseBreak.end
+task 'install:build', ()-> packageInstall buildModules
+task 'install:watch', ()-> packageInstall ['listr']
+task 'install:test', ()-> packageInstall testModules
+task 'install:karma', ()-> packageInstall testModules.concat(karmaModules)
+task 'install:coverage', ()-> packageInstall coverageModules
+task 'install:measure', ()-> packageInstall ['gzipped', 'sugar']
 
 
 
@@ -146,7 +98,11 @@ task 'measure', ()->
 
 
 
-
+watch = (globs, command)->
+	global.silent = true
+	Promise.resolve()
+		.then ()-> packageInstall 'simplywatch@3.0.0-l2'
+		.then ()-> require('simplywatch')({globs, command})
 
 
 runTaskList = (tasks)->
@@ -192,33 +148,9 @@ compileJS = (file, options)->
 
 
 
-installModules = (targetModules)->
-	targetModules = targetModules
-		.filter (module)-> if typeof module is 'string' then true else module[1]()
-		.map (module)-> if typeof module is 'string' then module else module[0]
-	
-	return if not targetModules.length
-	console.log "#{chalk.yellow('Installing')} #{chalk.dim targetModules.join ', '}"
-	
-	execa('npm', ['install', '--no-save', '--no-purne', targetModules...], {stdio:'inherit'})
 
 
-moduleInstalled = (targetModule)->
-	targetModule = targetModule[0] if typeof targetModule is 'object'
-	if (split=targetModule.split('@')) and split[0].length
-		targetModule = split[0]
-		targetVersion = split[1]
 
-	if /^github:.+?\//.test(targetModule)
-		targetModule = targetModule.replace /^github:.+?\//, ''
-	
-	pkgFile = Path.resolve('node_modules',targetModule,'package.json')
-	exists = fs.exists(pkgFile)
-	
-	if exists and targetVersion?
-		currentVersion = fs.read(pkgFile, 'json').version
-		exists = require('semver').gte(currentVersion, targetVersion)
 
-	return exists
 
 
