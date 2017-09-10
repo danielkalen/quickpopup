@@ -1,21 +1,19 @@
-import template,{bodyWrapper, html as htmlTemplate} from './template'
 promiseEvent = import 'p-event'
 promiseBreak = import 'promise-break'
 DOM = import 'quickdom'
 IS = import './checks'
-defaults = import './defaults'
+template = import './template'
 helpers = import './helpers'
 body = DOM(document.body)
 
 class Popup extends require('event-lite')
-	@defaults: defaults
 	@instances: []
 	@hasOpen: false
 	@bodyWrapper: null
 	@transitionEnd: helpers.transitionEnd()
 
 	@wrapBody: ()-> unless @bodyWrapper?.parent
-		@bodyWrapper = bodyWrapper.spawn()
+		@bodyWrapper = template.bodyWrapper.spawn()
 		bodyChildren = body.children.slice()
 		@bodyWrapper.prependTo(body)
 		@bodyWrapper.append(child) for child in bodyChildren
@@ -36,21 +34,31 @@ class Popup extends require('event-lite')
 
 
 
-	constructor: (settings)->
+	constructor: (settings, defaults, @template)->
 		@settings = helpers.extendSettings(defaults, settings)
 		@id = Math.round(Math.random()*1e5).toString(16)
 		@state = open:false, destroyed:false, offset:0, count:0
 		@content = DOM(@settings.content) if @settings.content
-		@el = template.spawn({data:{@content, placement:@settings.placement}}, relatedInstance:@)
 
 		super
 		Popup.instances.push(@)
 		Popup.wrapBody()
+		@_createElements()
 		@_attachBindings()
 		@_applyTemplate() if @settings.template and typeof @settings.template is 'object'
 
 		@el.prependTo(body)
 		@open() if @settings.open
+
+
+	_createElements: ()->
+		data = data:{@content, placement:@settings.placement}
+		config = relatedInstance: @
+		
+		@el = @template.popup.spawn(data, config)
+		overlay = @template.overlay.spawn(data, config).appendTo(@el)
+		content = @template.content.spawn(data, config).appendTo(@el)
+		close = @template.close.spawn(data, config).appendTo(content) if @settings.close.show
 
 
 	_applyTemplate: ()->
@@ -60,11 +68,10 @@ class Popup extends require('event-lite')
 
 		return
 
-
 	_attachBindings: ()->
 		close = @close.bind(@)
 		@el.child.overlay.on 'mouseup touchend', close
-		@el.child.close.on 'mouseup touchend', close
+		@el.child.close?.on 'mouseup touchend', close
 
 		if @settings.placement is 'center'
 			DOM(window).on "resize.#{@id}", ()=> if @state.open
@@ -98,7 +105,7 @@ class Popup extends require('event-lite')
 
 	_detachBindings: ()->
 		@el.child.overlay.off()
-		@el.child.close.off()
+		@el.child.close?.off()
 		{visibilitychange,hidden} = helpers.visibilityApiKeys()
 		
 		DOM(window).off "resize.#{@id}" if @settings.placement is 'center'
@@ -127,7 +134,7 @@ class Popup extends require('event-lite')
 			when IS.quickEl(target) then target
 			when IS.domEl(target) then DOM(target)
 			when IS.template(target) then target.spawn()
-			when IS.string(target) then htmlTemplate.spawn(data:html:target)
+			when IS.string(target) then template.html.spawn(data:html:target)
 			else throw new Error('invalid target provided to Popup::setContent()')
 		
 		@el.child.content.children[1].replaceWith @content
@@ -208,7 +215,7 @@ class Popup extends require('event-lite')
 				if not @settings.animation or not Popup.transitionEnd
 					@emit 'finishclose'
 				else
-					promise = promiseEvent(@, 'finishopen')
+					promise = promiseEvent(@, 'finishclose')
 					
 					@el.child.content.on Popup.transitionEnd, (event)=> if event.target is @el.child.content.raw
 						@emit 'finishclose'

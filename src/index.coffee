@@ -12,19 +12,19 @@ newBuilder = (defaults, templates)->
 		args = arguments
 		switch
 			when arguments.length is 0
-				new Popup
+				new Popup(null, defaults, templates)
 
 			when typeof arg is 'string'
-				new Popup content:htmlTemplate.spawn(data:html:arg)
+				new Popup(content:htmlTemplate.spawn(data:html:arg), defaults, templates)
 			
 			when DOM.isEl(arg), DOM.isQuickEl(arg)
-				new Popup content:arg
+				new Popup(content:arg, defaults, templates)
 			
 			when DOM.isTemplate(arg)
-				new Popup content:arg.spawn()
+				new Popup(content:arg.spawn(), defaults, templates)
 
 			when arg and typeof arg is 'object'
-				new Popup arg
+				new Popup(arg, defaults, templates)
 
 			else throw new Error('invalid argument provided to QuickPopup')
 
@@ -33,7 +33,9 @@ newBuilder = (defaults, templates)->
 		throw new Error "QuickPopup Config: invalid config object provided #{String newSettings}" if not IS.object(newSettings)
 		outputSettings = extend.clone.deep(defaults, newSettings)
 
-		if IS.object(newTemplates)
+		if not IS.object(newTemplates)
+			outputTemplates = templates
+		else
 			outputTemplates = Object.create(null)
 			for name,template of templates
 				if newTemplates[name]
@@ -48,6 +50,8 @@ newBuilder = (defaults, templates)->
 	builder.unwrapBody = ()-> Popup.unwrapBody()
 	builder.destroyAll = ()-> Popup.destroyAll()
 	builder.version = import '../package.json $ version'
+	builder.defaults = defaults
+	builder.templates = templates
 	return builder
 
 

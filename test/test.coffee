@@ -9,7 +9,7 @@ chai.use(import 'chai-asserttype')
 chai.use(import 'chai-events')
 mocha.setup('tdd')
 mocha.slow(400)
-mocha.timeout(12000)
+mocha.timeout(6000)
 mocha.bail() unless window.__karma__
 expect = chai.expect
 assert = chai.assert
@@ -55,7 +55,7 @@ suite "QuickPopup", ()->
 				popup = Popup('<b class="theBoldOne">provided string</b><i class="theSlantedOne"> is slanted</b>')
 				assert.equal popup.el.text, 'provided string is slanted'
 				
-				contents = popup.el.child.content.children[1].children
+				contents = popup.el.child.content.lastChild.children
 				assert.equal contents.length, 2
 				assert.equal contents[0].type, 'b'
 				assert.equal contents[1].type, 'i'
@@ -69,7 +69,7 @@ suite "QuickPopup", ()->
 				popup = Popup(div.raw)
 				assert.equal popup.el.text, 'provided el'
 				
-				contents = popup.el.child.content.children.slice(1)
+				contents = popup.el.child.content.children
 				assert.equal contents.length, 1
 				assert.equal contents[0].type, 'div'
 				assert.equal contents[0].raw.className, 'abc123'
@@ -83,7 +83,7 @@ suite "QuickPopup", ()->
 				popup = Popup(div)
 				assert.equal popup.el.text, 'provided el'
 				
-				contents = popup.el.child.content.children.slice(1)
+				contents = popup.el.child.content.children
 				assert.equal contents.length, 1
 				assert.equal contents[0].type, 'div'
 				assert.equal contents[0].raw.className, 'abc123'
@@ -120,6 +120,112 @@ suite "QuickPopup", ()->
 			popup = Popup()
 			assert.equal DOM(document.body).children.length, 2
 			assert.equal DOM.query('#bodyWrapper').children.length, bodyChildren.length
+
+		test "Popup.config() will return a new constructor with customized setting defaults & templates", ()->
+			Popup2 = Popup.config({animation:100})
+			assert.notEqual Popup2, Popup
+			assert.equal Popup2.defaults.animation, 100
+			assert.notEqual Popup.defaults.animation, 100
+			Popup()
+			Popup2()
+
+
+	suite "open/close", ()->
+		suiteSetup ()-> @Popup = Popup.config({animation:50})
+		test "will return promises that resolve when animation ends", ()->
+			content = DOM.div(null, 'abc123')
+			popup = @Popup(content)
+			startTime = Date.now()
+			openTime = null
+
+			assert.equal popup.state.open, false
+
+			openPromise = popup.open()
+			assert.ok openPromise instanceof Promise
+			assert.ok openPromise.isPending()
+
+			Promise.bind(@)
+				.then ()-> openPromise
+				.then ()->
+					openTime = Date.now()
+					assert.isAtLeast openTime-startTime, @Popup.defaults.animation/2
+					assert.equal popup.state.open, true
+
+				.then ()-> popup.close()
+				.then ()->
+					assert.isAtLeast Date.now()-openTime, @Popup.defaults.animation/2
+					assert.equal popup.state.open, false
+
+
+		test "will emit events before/present/finish for open/close", ()->
+			popup = @Popup()
+			events = ['beforeopen','open','finishopen','beforeclose','close','finishclose']
+			count = {}
+			events.forEach (event)->
+				count[event] = 0
+				popup.on event, ()-> count[event]++
+
+			Promise.resolve()
+				.then ()-> assert.deepEqual count, {beforeopen:0, open:0, finishopen:0, beforeclose:0, close:0, finishclose:0}
+				.then ()-> popup.open()
+				.then ()-> assert.deepEqual count, {beforeopen:1, open:1, finishopen:1, beforeclose:0, close:0, finishclose:0}
+				.then ()-> popup.close()
+				.then ()-> assert.deepEqual count, {beforeopen:1, open:1, finishopen:1, beforeclose:1, close:1, finishclose:1}
+
+
+		test "will fail to open if another popup is open", ()->
+			popupA = @Popup()
+			popupB = @Popup()
+
+			Promise.resolve()
+				.then ()->
+					assert.equal popupA.state.open, false
+					assert.equal popupB.state.open, false
+				
+				.then ()-> popupA.open()
+				.then ()->
+					assert.equal popupA.state.open, true
+					assert.equal popupB.state.open, false
+
+				.then ()-> popupB.open()
+				.then ()->
+					assert.equal popupA.state.open, true
+					assert.equal popupB.state.open, false
+
+
+		test "will close all other open popups and will force open when options.forceOpen", ()->
+			popupA = @Popup()
+			popupB = @Popup(forceOpen:true)
+
+			Promise.resolve()
+				.then ()->
+					assert.equal popupA.state.open, false
+					assert.equal popupB.state.open, false
+				
+				.then ()-> popupA.open()
+				.then ()->
+					assert.equal popupA.state.open, true
+					assert.equal popupB.state.open, false
+
+				.then ()-> popupB.open()
+				.then ()->
+					assert.equal popupA.state.open, false
+					assert.equal popupB.state.open, true
+
+				.then ()-> popupA.open()
+				.then ()->
+					assert.equal popupA.state.open, false
+					assert.equal popupB.state.open, true
+
+
+
+
+
+
+
+
+
+
 
 
 
