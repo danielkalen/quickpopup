@@ -178,7 +178,7 @@ class Popup extends require('event-lite')
 				Popup.bodyWrapper.state 'open', on
 				@el.state 'open', on
 				@state.open = Popup.hasOpen = true
-				@alignToCenter()
+				@alignToCenter() if @settings.placement is 'center'
 				@emit 'open', triggerName
 				
 				if not @settings.animation or not Popup.transitionEnd
