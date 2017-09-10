@@ -16,7 +16,7 @@ export default DOM.template(
 			transition: (popup)-> "all 0.001s linear #{popup.settings.animation+1}ms"
 			
 			$open:
-				transition: 'all 0.001s linear 0s'
+				transition: ()-> 'all 0.001s linear 0s'
 				visibility: 'visible'
 				overflow: 'visible'
 				height: 'auto'
@@ -31,9 +31,11 @@ export default DOM.template(
 				top: 0
 				width: '100vw'
 				minHeight: '100vh'
-				# opacity: 0
+				opacity: 0
 				backgroundColor: (popup)-> popup.settings.overlayColor
-				# transition: (popup)-> "all 0.001s linear #{popup.settings.animation+1}ms"
+				transition: (popup)-> "opacity #{popup.settings.animation}ms"
+				$open:
+					opacity: 1
 		]
 
 
