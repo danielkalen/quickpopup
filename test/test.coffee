@@ -10,7 +10,7 @@ chai.use(import 'chai-events')
 mocha.setup('tdd')
 mocha.slow(400)
 mocha.timeout(12000)
-mocha.bail() unless window.location.hostname
+mocha.bail() unless window.__karma__
 expect = chai.expect
 assert = chai.assert
 @sandbox = null
@@ -19,6 +19,7 @@ assert = chai.assert
 
 suite "QuickPopup", ()->
 	setup(helpers.restartSandbox)
+	teardown(Popup.destroyAll)
 
 	test "Version Property", ()->
 		packageVersion = (import '../package $ version')
@@ -26,8 +27,6 @@ suite "QuickPopup", ()->
 
 
 	suite "instance", ()->
-		test "should create a wrapper element around body contents", ()->
-		
 		test "should be an event emitter", ()->
 			popup = Popup()
 			assert.equal typeof popup.on, 'function'
@@ -98,6 +97,33 @@ suite "QuickPopup", ()->
 								
 				assert.equal popupA.settings.placement, 'center'
 				assert.equal popupB.settings.placement, 'bottom'
+
+
+	suite "behavior", ()->
+		test "should create a wrapper element around body contents", ()->
+			assert.equal typeof DOM.query('#bodyWrapper'), 'undefined'
+			bodyChildren = DOM(document.body).children.slice()
+
+			popup = Popup()
+			assert.equal typeof DOM.query('#bodyWrapper'), 'object'
+			assert.equal DOM.query('#bodyWrapper').parent, DOM(document.body)
+			assert.equal DOM(document.body).children.length, 2
+			assert.equal DOM.query('#bodyWrapper').children.length, bodyChildren.length
+			
+			Popup.unwrapBody()
+			assert.equal typeof DOM.query('#bodyWrapper'), 'undefined'
+			assert.equal DOM(document.body).children.length, bodyChildren.length+1
+
+			popup.destroy()
+			assert.equal DOM(document.body).children.length, bodyChildren.length
+			
+			popup = Popup()
+			assert.equal DOM(document.body).children.length, 2
+			assert.equal DOM.query('#bodyWrapper').children.length, bodyChildren.length
+
+
+
+
 
 
 

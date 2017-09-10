@@ -16,7 +16,7 @@ export default DOM.template(
 			transition: (popup)-> "all 0.001s linear #{popup.settings.animation+1}ms"
 			
 			$open:
-				transition: 'all 0.001s linear 0s'
+				transition: ()-> 'all 0.001s linear 0s'
 				visibility: 'visible'
 				overflow: 'visible'
 				height: 'auto'
@@ -31,7 +31,11 @@ export default DOM.template(
 				top: 0
 				width: '100vw'
 				minHeight: '100vh'
+				opacity: 0
 				backgroundColor: (popup)-> popup.settings.overlayColor
+				transition: (popup)-> "opacity #{popup.settings.animation}ms"
+				$open:
+					opacity: 1
 		]
 
 
@@ -46,10 +50,10 @@ export default DOM.template(
 				padding: (popup)-> popup.settings.contentPadding
 				opacity: 0
 				transition: (popup)->
-					duration = popup.settings.animation/1e3
-					"transform #{duration}s,
-					-webkit-transform #{duration}s
-					opacity #{duration}s"
+					duration = popup.settings.animation
+					"transform #{duration}ms,
+					-webkit-transform #{duration}ms
+					opacity #{duration}ms"
 				
 				$open:
 					opacity: 1
@@ -107,7 +111,8 @@ export default DOM.template(
 
 export bodyWrapper = DOM.template(
 	['div'
-		ref: 'bodyWrapper'
+		id: 'bodyWrapper'
+		passStateToChildren: false
 		style:
 			$open:
 				position: 'fixed'

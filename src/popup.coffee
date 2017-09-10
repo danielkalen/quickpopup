@@ -1,4 +1,6 @@
 import template,{bodyWrapper, html as htmlTemplate} from './template'
+promiseEvent = import 'p-event'
+promiseBreak = import 'promise-break'
 DOM = import 'quickdom'
 IS = import './checks'
 defaults = import './defaults'
@@ -12,7 +14,7 @@ class Popup extends require('event-lite')
 	@bodyWrapper: null
 	@transitionEnd: helpers.transitionEnd()
 
-	@wrapBody: ()-> unless @bodyWrapper
+	@wrapBody: ()-> unless @bodyWrapper?.parent
 		@bodyWrapper = bodyWrapper.spawn()
 		bodyChildren = body.children.slice()
 		@bodyWrapper.prependTo(body)
@@ -26,7 +28,8 @@ class Popup extends require('event-lite')
 		@bodyWrapper = null
 
 	@destroyAll: ()->
-		instance.destroy() for instance in @instances
+		instances = @instances.slice()
+		instance.destroy() for instance in instances
 		@unwrapBody()
 
 
@@ -38,7 +41,7 @@ class Popup extends require('event-lite')
 		@id = Math.round(Math.random()*1e5).toString(16)
 		@state = open:false, destroyed:false, offset:0, count:0
 		@content = DOM(@settings.content) if @settings.content
-		@el = template.spawn({data:{@content}, placement:@settings.placement}, relatedInstance:@)
+		@el = template.spawn({data:{@content, placement:@settings.placement}}, relatedInstance:@)
 
 		super
 		Popup.instances.push(@)
@@ -47,7 +50,7 @@ class Popup extends require('event-lite')
 		@_applyTemplate() if @settings.template and typeof @settings.template is 'object'
 
 		@el.prependTo(body)
-		@open() if @settings.openOnInit
+		@open() if @settings.open
 
 
 	_applyTemplate: ()->
@@ -142,58 +145,79 @@ class Popup extends require('event-lite')
 		@el.child.content.style 'margin', "#{offset}px auto"
 
 
-	open: (triggerName)-> if not @open and (not Popup.hasOpen or @settings.forceOpen)
-		@_throwDestroyed() if @state.destroyed
-		return if ++@state.count >= @settings.openLimit
-		return if window.innerWidth < @settings.triggers.open.minWidth
-		return if @settings.condition and not @settings.condition()
-		
-		@emit 'beforeopen', triggerName
-		
-		if not Popup.hasOpen
-			@state.offset = helpers.scrollOffset()
-		else
-			for popup in Popup.instances when popup isnt @ and popup.state.open
-				@state.offset = popup.state.offset
-				popup.close(true)
-		
+	open: (triggerName)->
+		Promise.resolve()
+			.then ()=>
+				@_throwDestroyed() if @state.destroyed
+				promiseBreak() if false or
+					@state.open or (Popup.hasOpen and not @settings.forceOpen) or
+					++@state.count >= @settings.openLimit or
+					window.innerWidth < @settings.triggers.open.minWidth or
+					@settings.condition and not @settings.condition()
+			
+			.then ()=>
+				@emit 'beforeopen', triggerName
+				
+				if not Popup.hasOpen
+					@state.offset = helpers.scrollOffset()
+				else
+					openPopups = Popup.instances.filter (popup)=> popup isnt @ and popup.state.open
+					Promise.all openPopups.map (popup)=>
+						@state.offset = popup.state.offset
+						popup.close(true)
+				
+			.then ()=>
+				helpers.scheduleScrollReset(5)
+				Popup.bodyWrapper.state 'open', on
+				@el.state 'open', on
+				@state.open = Popup.hasOpen = true
+				@alignToCenter()
+				@emit 'open', triggerName
+				
+				if not @settings.animation or not Popup.transitionEnd
+					@emit 'finishopen'
+				else
+					promise = promiseEvent(@, 'finishopen')
+					
+					@el.child.content.on Popup.transitionEnd, (event)=> if event.target is @el.child.content.raw
+						@emit 'finishopen'
+						@el.child.content.off Popup.transitionEnd
+				
+					return promise
 
-		helpers.scheduleScrollReset(5)
-		Popup.bodyWrapper.state 'open', on
-		@el.state 'open', on
-		@state.open = Popup.hasOpen = true
-		@alignToCenter()
-		@emit 'open', triggerName
-		
-		if not @settings.animation or not Popup.transitionEnd
-			@emit 'finishopen'
-		else
-			@el.child.content.on Popup.transitionEnd, (event)=> if event.target is @el.child.content.raw
-				@emit 'finishopen'
-				@el.child.content.off Popup.transitionEnd
-		return @
+			.catch promiseBreak.end
+			.then ()=> @
 
 
-	close: (preventReset)-> if @state.open
-		@emit 'beforeclose'
+	close: (preventReset)->
+		Promise.resolve()
+			.then ()=> promiseBreak() if not @state.open
+			.then ()=>
+				@emit 'beforeclose'
 
-		unless preventReset
-			setTimeout ()=> unless Popup.hasOpen
-				Popup.bodyWrapper.state 'open', off
-				window.scroll 0, @state.offset + helpers.documentOffset()
+				unless preventReset is true
+					setTimeout ()=> unless Popup.hasOpen
+						Popup.bodyWrapper?.state 'open', off
+						window.scroll 0, @state.offset + helpers.documentOffset()
 
-			Popup.hasOpen = false
+					Popup.hasOpen = false
 
-		@el.state 'open', off
-		@state.open = false
-		@emit 'close'
-		if not @settings.animation or not Popup.transitionEnd
-			@emit 'finishclose'
-		else
-			@el.child.content.on Popup.transitionEnd, (event)=> if event.target is @el.child.content.raw
-				@emit 'finishclose'
-				@el.child.content.off Popup.transitionEnd
-		return @
+				@el.state 'open', off
+				@state.open = false
+				@emit 'close'
+				if not @settings.animation or not Popup.transitionEnd
+					@emit 'finishclose'
+				else
+					promise = promiseEvent(@, 'finishopen')
+					
+					@el.child.content.on Popup.transitionEnd, (event)=> if event.target is @el.child.content.raw
+						@emit 'finishclose'
+						@el.child.content.off Popup.transitionEnd
+
+					return promise
+			
+			.catch promiseBreak.end
+			.then ()=> @
 
 
 	destroy: ()->
