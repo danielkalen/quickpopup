@@ -12,7 +12,7 @@ class Popup extends require('event-lite')
 	@bodyWrapper: null
 	@transitionEnd: helpers.transitionEnd()
 
-	@wrapBody: ()-> unless @bodyWrapper
+	@wrapBody: ()-> unless @bodyWrapper?.parent
 		@bodyWrapper = bodyWrapper.spawn()
 		bodyChildren = body.children.slice()
 		@bodyWrapper.prependTo(body)
@@ -26,7 +26,8 @@ class Popup extends require('event-lite')
 		@bodyWrapper = null
 
 	@destroyAll: ()->
-		instance.destroy() for instance in @instances
+		instances = @instances.slice()
+		instance.destroy() for instance in instances
 		@unwrapBody()
 
 
@@ -47,7 +48,7 @@ class Popup extends require('event-lite')
 		@_applyTemplate() if @settings.template and typeof @settings.template is 'object'
 
 		@el.prependTo(body)
-		@open() if @settings.openOnInit
+		@open() if @settings.open
 
 
 	_applyTemplate: ()->
@@ -142,7 +143,7 @@ class Popup extends require('event-lite')
 		@el.child.content.style 'margin', "#{offset}px auto"
 
 
-	open: (triggerName)-> if not @open and (not Popup.hasOpen or @settings.forceOpen)
+	open: (triggerName)-> if not @state.open and (not Popup.hasOpen or @settings.forceOpen)
 		@_throwDestroyed() if @state.destroyed
 		return if ++@state.count >= @settings.openLimit
 		return if window.innerWidth < @settings.triggers.open.minWidth

@@ -54,6 +54,8 @@
     "@danielkalen/is": "^2.0.0",
     "detect-animation-end-helper": "^0.1.0",
     "event-lite": "^0.1.1",
+    "p-event": "^1.3.0",
+    "promise-break": "^0.1.2",
     "quickdom": "^1.0.77",
     "smart-extend": "^1.7.3"
   },

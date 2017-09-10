@@ -5,24 +5,26 @@ import {html as htmlTemplate} from './template'
 QuickPopup = (arg)->
 	args = arguments
 	switch
-		when args.length is 0
+		when arguments.length is 0
 			new Popup
 
-		when typeof args[0] is 'string'
-			new Popup content:htmlTemplate.spawn(data:html:args[0])
+		when typeof arg is 'string'
+			new Popup content:htmlTemplate.spawn(data:html:arg)
 		
-		when DOM.isEl(args[0]), DOM.isQuickEl(args[0])
-			new Popup content:args[0]
+		when DOM.isEl(arg), DOM.isQuickEl(arg)
+			new Popup content:arg
 		
-		when DOM.isTemplate(args[0])
-			new Popup content:args[0].spawn()
+		when DOM.isTemplate(arg)
+			new Popup content:arg.spawn()
 
-		when args[0] and typeof args[0] is 'object'
-			new Popup args[0]
+		when arg and typeof arg is 'object'
+			new Popup arg
 
 		else throw new Error('invalid argument provided to QuickPopup')
 
-
+QuickPopup.wrapBody = ()-> Popup.wrapBody()
+QuickPopup.unwrapBody = ()-> Popup.unwrapBody()
+QuickPopup.destroyAll = ()-> Popup.destroyAll()
 
 
 

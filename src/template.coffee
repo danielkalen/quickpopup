@@ -31,7 +31,9 @@ export default DOM.template(
 				top: 0
 				width: '100vw'
 				minHeight: '100vh'
+				# opacity: 0
 				backgroundColor: (popup)-> popup.settings.overlayColor
+				# transition: (popup)-> "all 0.001s linear #{popup.settings.animation+1}ms"
 		]
 
 
@@ -107,7 +109,8 @@ export default DOM.template(
 
 export bodyWrapper = DOM.template(
 	['div'
-		ref: 'bodyWrapper'
+		id: 'bodyWrapper'
+		passStateToChildren: false
 		style:
 			$open:
 				position: 'fixed'

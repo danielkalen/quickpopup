@@ -1,6 +1,6 @@
 module.exports = 
 	placement: 'center'
-	openOnInit: false
+	open: false
 	forceOpen: false
 	template: null
 	condition: null

@@ -66,7 +66,7 @@ task 'install', ()->
 		.then ()-> invoke 'install:bench'
 
 task 'install:build', ()-> packageInstall buildModules
-task 'install:watch', ()-> packageInstall ['listr']
+task 'install:watch', ()-> packageInstall ['listr','simplywatch@3.0.0-l2']
 task 'install:test', ()-> packageInstall testModules
 task 'install:karma', ()-> packageInstall testModules.concat(karmaModules)
 task 'install:coverage', ()-> packageInstall coverageModules
@@ -101,7 +101,7 @@ task 'measure', ()->
 watch = (globs, command)->
 	global.silent = true
 	Promise.resolve()
-		.then ()-> packageInstall 'simplywatch@3.0.0-l2'
+		# .then ()-> packageInstall 'simplywatch@3.0.0-l2'
 		.then ()-> require('simplywatch')({globs, command})
 
 
