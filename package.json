@@ -5,7 +5,7 @@
   "main": "dist/quickpopup.js",
   "browser": {
     "./debug": "dist/quickpopup.debug.js",
-    "./dist/quickpopup.js": "src/quickpopup.coffee"
+    "./dist/quickpopup.js": "src/index.coffee"
   },
   "browserify": {
     "transform": [
