@@ -8,7 +8,8 @@ module.exports = (file, options, file_, content)->
 		result = Closure.compile(extend jsCode:[src:content], config)
 		
 		if result.errors.length
-			console.error(result.errors)
+			errors = result.errors.map (err)-> {err:err.description, line:"#{err.lineNo}:#{err.charNo}"}
+			console.error(errors)
 			throw new Error('closure compiler failed')
 		else if result.warnings.length
 			console.error(result.warnings)

@@ -1,0 +1,24 @@
+{
+  "1.0.0": [
+    {
+      "debug": {
+        "orig": "213.17KB",
+        "gzip": "54.09KB"
+      },
+      "release": {
+        "orig": "49.53KB",
+        "gzip": "15.08KB"
+      }
+    },
+    {
+      "debug": {
+        "orig": "217.02KB",
+        "gzip": "54.86KB"
+      },
+      "release": {
+        "orig": "53.76KB",
+        "gzip": "16.38KB"
+      }
+    }
+  ]
+}

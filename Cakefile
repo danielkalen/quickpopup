@@ -8,7 +8,7 @@ Path = require 'path'
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
 process.env.SOURCE_MAPS ?= 1
-buildModules = ['simplyimport@4.0.0-s34','google-closure-compiler-js','uglify-js@3.0.24']
+buildModules = ['simplyimport@4.0.0-s34','google-closure-compiler-js','uglify-js@3.0.24','babelify','babel-preset-es2015-script']
 coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage']
 testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
 karmaModules = ['electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
@@ -139,13 +139,17 @@ measure = (file)->
 
 compileJS = (file, options)->
 	Promise.resolve()
-		.then ()-> require('simplyimport')(extend {file:file.src}, options)
+		.then ()-> require('simplyimport')(extend {file:file.src, usePaths:options.debug, specific}, options)
 		.then (result)-> fs.writeAsync(file.dest, result)
 		.catch (err)->
 			console.error(err) if err not instanceof Error
 			throw err
 
-
+babelify = transform:['babelify', {presets:'babel-preset-es2015-script', sourceMaps:false}]
+specific = 
+	'p-event': babelify
+	'p-finally': babelify
+	'p-timeout': babelify
 
 
 
