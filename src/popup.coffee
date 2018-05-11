@@ -137,7 +137,10 @@ class Popup extends require('event-lite')
 			when IS.string(target) then template.html.spawn(data:html:target)
 			else throw new Error('invalid target provided to Popup::setContent()')
 		
-		@el.child.content.children[1].replaceWith @content
+		if @el.child.content.children.length
+			@el.child.content.children[1].replaceWith @content
+		else
+			@el.child.content.append @content
 
 
 	alignToCenter: ()->
