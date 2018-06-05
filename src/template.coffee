@@ -124,7 +124,7 @@ export bodyWrapper = DOM.template(
 			$open:
 				position: 'fixed'
 				width: '100%'
-				top: ''
+				top: '0'
 	]
 )
 

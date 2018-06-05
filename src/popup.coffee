@@ -179,6 +179,7 @@ class Popup extends require('event-lite')
 			.then ()=>
 				helpers.scheduleScrollReset(5)
 				Popup.bodyWrapper.state 'open', on
+				Popup.bodyWrapper.style 'top', @state.offset*-1
 				@el.state 'open', on
 				@state.open = Popup.hasOpen = true
 				@alignToCenter() if @settings.placement is 'center'
@@ -208,6 +209,7 @@ class Popup extends require('event-lite')
 				unless preventReset is true
 					setTimeout ()=> unless Popup.hasOpen
 						Popup.bodyWrapper?.state 'open', off
+						Popup.bodyWrapper?.style 'top', null
 						window.scroll 0, @state.offset + helpers.documentOffset()
 
 					Popup.hasOpen = false

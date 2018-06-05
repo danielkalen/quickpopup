@@ -8,7 +8,7 @@ Path = require 'path'
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
 process.env.SOURCE_MAPS ?= 1
-buildModules = ['simplyimport@4.0.0-s34','google-closure-compiler-js','uglify-js@3.0.24','babelify','babel-preset-es2015-script']
+buildModules = ['simplyimport@4.0.0-t7','google-closure-compiler-js','uglify-js@3.0.24','babelify','babel-preset-es2015-script','babel-core']
 coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage']
 testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
 karmaModules = ['electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
@@ -66,7 +66,7 @@ task 'install', ()->
 		.then ()-> invoke 'install:bench'
 
 task 'install:build', ()-> packageInstall buildModules
-task 'install:watch', ()-> packageInstall ['listr','simplywatch@3.0.0-l2']
+task 'install:watch', ()-> packageInstall ['listr','simplywatch@3.0.0-l5']
 task 'install:test', ()-> packageInstall testModules
 task 'install:karma', ()-> packageInstall testModules.concat(karmaModules)
 task 'install:coverage', ()-> packageInstall coverageModules
@@ -101,7 +101,7 @@ task 'measure', (options)->
 watch = (globs, command)->
 	global.silent = true
 	Promise.resolve()
-		# .then ()-> packageInstall 'simplywatch@3.0.0-l2'
+		# .then ()-> packageInstall 'simplywatch@3.0.0-l5'
 		.then ()-> require('simplywatch')({globs, command})
 
 
