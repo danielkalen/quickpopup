@@ -9,6 +9,7 @@ module.exports = (config)-> config.set
 	files: [
 		LIB_FILE
 		'node_modules/bluebird/js/browser/bluebird.js'
+		'test/sauceReporter.js'
 		'test/test.js'
 	]
 	exclude: [
@@ -30,19 +31,25 @@ module.exports = (config)-> config.set
 	electronOpts:
 		show: false
 
+	client:
+		# runInParent:true
+		clearContext:false
+		mocha: {reporter:'html'}
+
 	port: 9876
 	colors: true
 	logLevel: config.LOG_INFO
 	# autoWatch: if process.env.sauce then false else true
 	# autoWatchBatchDelay: 1000
 	# restartOnFileChange: true
-	singleRun: true
+	singleRun: process.env.sauce
 	concurrency: if process.env.sauce then 2 else 5
 	captureTimeout: 1.8e5 if process.env.sauce
 	browserNoActivityTimeout: 1.8e5 if process.env.sauce
 	browserDisconnectTimeout: 1e4 if process.env.sauce
 	browserDisconnectTolerance: 3 if process.env.sauce
 	browsers: if process.env.sauce then Object.keys(require('./sauceTargets')) else ['Chrome', 'Firefox', 'Opera', 'Safari']
+	retryLimit: 1 if process.env.sauce
 	customLaunchers: require('./sauceTargets')
 	sauceLabs: 
 		testName: 'QuickPopup Test Suite'

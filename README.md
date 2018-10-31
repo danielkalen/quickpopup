@@ -42,8 +42,7 @@ Array containing all active popup instances.
 
 ### `QuickPopup.defaults`
   - `placement` - placement of popup relative to the window when open. Can be one of: `'center'`,`'top'`,`'bottom'` *(default: 'top')*
-  - `openOnInit` - should the popup be opened immediatly after creation *(default: false)*
-  - `closeOnEsc` - should the popup be closed when the `Esc` key on the user's keyboard is pressed
+  - `open` - should the popup be opened immediatly after creation *(default: false)*
   - `forceOpen` - if `popup.open()` is called when another popup is open, this setting will ensure that the other will be closed. If this is set to false and another popup is open then `popup.open()` will do nothing *(default: false)*
   - `animation` - open animation speed in milliseconds *(default: 300)*
   - `contentPadding` - padding to apply inside the content wrapper *(default: 0)*
@@ -54,6 +53,13 @@ Array containing all active popup instances.
     - `padding` - how far from the edge should the close button be placed *(default: 20)*
     - `inside` - should the close button be placed inside or outside the content box
     - `size` - width/height of close button in pixels *(default: 22)*
+  - `triggers` - the triggers that will cause the popup to be automatically opened/closed
+    - `open`
+      - `navigation` - when user goes back in browser history *(default:false)*
+      - `visibility` - when page is not in focus i.e. switch tabs *(default:false)*
+      - `exitIntent` - when user intends to exit the page *(default:false)*
+    - `close`
+      - `esc` - when user hits the 'esc' key on keyboard *(default:true)*
 
 
 ### `popup.open()`
@@ -64,6 +70,36 @@ Closes/hides the popup element.
 
 ### `popup.destroy()`
 Removes the popup element from the DOM & destroys the popup instance.
+
+### events
+The following events are emitted by a popup instance:
+
+#### `beforeopen(triggerName)`
+Emitted before opening animation begins.
+
+**`triggerName`**
+Method of opening the popup.
+- `null`: when opened manually via the api.
+- `"visibility"`: when opened via the visibility trigger
+- `"navigation"`: when opened via the navigation trigger
+- `"exitIntent"`: when opened via the exitIntent trigger
+
+#### `open(triggerName)`
+Emitted when opening animation begins.
+
+#### `finishopen(triggerName)`
+Emitted when opening animation ends and popup becomes fully visible.
+
+#### `beforeclose`
+Emitted before closing animation begins.
+
+#### `close`
+Emitted when closing animation begins.
+
+#### `finishclose`
+Emitted when closing animation ends and becomes fully invisible.
+
+
 
 
 ## License
