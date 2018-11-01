@@ -92,7 +92,7 @@ class Popup extends require('event-lite')
 		if @settings.triggers.open.exitIntent
 			DOM(document).on "mouseleave.#{@id}", (event)=>
 				base = if BROWSER.isIE or BROWSER.isIE11 or BROWSER.isEdge then 110 else 0
-				threshold = @options.yThreshold + base
+				threshold = @settings.yThreshold + base
 				@open('exitIntent') if event.clientY <= threshold
 
 		if @settings.triggers.open.navigation and window.history?.pushState
