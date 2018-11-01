@@ -90,7 +90,7 @@ class Popup extends require('event-lite')
 				@open('visibility') if document[hidden]
 
 		if @settings.triggers.open.exitIntent
-			DOM(window).on "mouseleave.#{@id}", (event)=>
+			DOM(document).on "mouseleave.#{@id}", (event)=>
 				base = if BROWSER.isIE or BROWSER.isIE11 or BROWSER.isEdge then 110 else 0
 				threshold = @options.yThreshold + base
 				@open('exitIntent') if event.clientY <= threshold
