@@ -6,6 +6,7 @@ module.exports =
 	condition: null
 	animation: 300
 	contentPadding: 0
+	yThreshold: 15
 	openLimit: Infinity
 	overlayColor: 'rgba(0,0,0,0.88)'
 	close:

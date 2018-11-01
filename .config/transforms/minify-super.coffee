@@ -5,6 +5,7 @@ module.exports = (file, options, file_, content)->
 		return content
 	else
 		Closure = require('google-closure-compiler-js')
+		console.log Closure
 		result = Closure.compile(extend jsCode:[src:content], config)
 		
 		if result.errors.length

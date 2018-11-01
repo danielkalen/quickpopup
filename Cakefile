@@ -1,5 +1,5 @@
 global.Promise = require 'bluebird'
-Promise.config longStackTraces:process.env.DEBUG?
+Promise.config longStackTraces:process.env.PROMISE_DEBUG?
 extend = require 'smart-extend'
 packageInstall = require 'package-install'
 fs = require 'fs-jetpack'
@@ -8,7 +8,7 @@ Path = require 'path'
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
 process.env.SOURCE_MAPS ?= 1
-buildModules = ['simplyimport@4.0.0-t7','google-closure-compiler-js','uglify-js@3.0.24','babelify','babel-preset-es2015-script','babel-core']
+buildModules = ['simplyimport@4.0.6','google-closure-compiler-js@20180610.0.0','uglify-js@3.0.24','babelify','@babel/preset-env','@babel/core']
 coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage']
 testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
 karmaModules = ['electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
@@ -30,6 +30,7 @@ task 'build:js', (options)->
 		.then ()-> {src:"src/index.coffee", dest:"build/quickpopup#{debug}.js"}
 		.tap ()-> console.log 'compiling js' unless global.silent
 		.then (file)-> compileJS(file, debug:options.debug, umd:'quickpopup', target:'browser')
+		.catch (err)-> console.error(err)
 
 task 'build:test', (options)->
 	Promise.resolve()
@@ -145,7 +146,7 @@ compileJS = (file, options)->
 			console.error(err) if err not instanceof Error
 			throw err
 
-babelify = transform:['babelify', {presets:'babel-preset-es2015-script', sourceMaps:false}]
+babelify = transform:['babelify', {presets:['@babel/preset-env'], sourceMaps:false}]
 specific = 
 	'p-event': babelify
 	'p-finally': babelify

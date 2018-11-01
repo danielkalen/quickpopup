@@ -41,9 +41,10 @@ Boolean indicator of whether or not any popup instance is currently open/being d
 Array containing all active popup instances.
 
 ### `QuickPopup.defaults`
-  - `placement` - placement of popup relative to the window when open. Can be one of: `'center'`,`'top'`,`'bottom'` *(default: 'top')*
+  - `placement` - placement of popup relative to the window when open. Can be one of: `'center'`,`'top'`,`'bottom'` *(default: 'center')*
   - `open` - should the popup be opened immediatly after creation *(default: false)*
   - `forceOpen` - if `popup.open()` is called when another popup is open, this setting will ensure that the other will be closed. If this is set to false and another popup is open then `popup.open()` will do nothing *(default: false)*
+  - `content` - the content element to place inside the popup
   - `animation` - open animation speed in milliseconds *(default: 300)*
   - `contentPadding` - padding to apply inside the content wrapper *(default: 0)*
   - `overlayColor` - color to apply to the background overlay *(default: 'rgba(0,0,0,0.88)')*

@@ -4,6 +4,7 @@ DOM = import 'quickdom'
 IS = import './checks'
 template = import './template'
 helpers = import './helpers'
+BROWSER = import './browser-info'
 body = DOM(document.body)
 
 class Popup extends require('event-lite')
@@ -90,7 +91,9 @@ class Popup extends require('event-lite')
 
 		if @settings.triggers.open.exitIntent
 			DOM(window).on "mouseleave.#{@id}", (event)=>
-				@open('exitIntent') if event.clientY < 1
+				base = if BROWSER.isIE or BROWSER.isIE11 or BROWSER.isEdge then 110 else 0
+				threshold = @options.yThreshold + base
+				@open('exitIntent') if event.clientY <= threshold
 
 		if @settings.triggers.open.navigation and window.history?.pushState
 			window.history.replaceState {id:'quickpopup-origin'}, '', ''
