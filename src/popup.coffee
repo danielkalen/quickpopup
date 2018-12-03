@@ -36,12 +36,12 @@ class Popup extends require('event-lite')
 
 
 	constructor: (settings, defaults, @template)->
+		super()
 		@settings = helpers.extendSettings(defaults, settings)
 		@id = Math.round(Math.random()*1e5).toString(16)
 		@state = open:false, destroyed:false, offset:0, count:0
 		@content = DOM(@settings.content) if @settings.content
 
-		super
 		Popup.instances.push(@)
 		Popup.wrapBody()
 		@_createElements()
