@@ -112,8 +112,8 @@ class Popup extends require('event-lite')
 		{visibilitychange,hidden} = helpers.visibilityApiKeys()
 		
 		DOM(window).off "resize.#{@id}" if @settings.placement is 'center'
-		DOM(window).off "mouseleave.#{@id}" if @settings.triggers.open.exitIntent
 		DOM(window).off "popstate.#{@id}" if @settings.triggers.open.navigation
+		DOM(document).off "mouseleave.#{@id}" if @settings.triggers.open.exitIntent
 		DOM(document).off "#{visibilitychange}.#{@id}" if @settings.triggers.open.visibility
 		DOM(document).off "keyup.#{@id}" if @settings.triggers.close.esc
 
