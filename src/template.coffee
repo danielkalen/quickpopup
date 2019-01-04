@@ -63,6 +63,7 @@ export content = DOM.template(
 			
 			$open:
 				opacity: 1
+				_:0
 
 			$centerPlacement:
 				left: '50%'
@@ -72,13 +73,17 @@ export content = DOM.template(
 				top: 0
 				left: '50%'
 				transform: 'translateX(-50%) translateY(-100%)'
-				$open: transform: 'translateX(-50%) translateY(0)'
+				$open:
+					transform: 'translateX(-50%) translateY(0)'
+					_:1
 			
 			$bottomPlacement:
 				bottom: 0
 				left: '50%'
 				transform: 'translateX(-50%) translateY(100%)'
-				$open: transform: 'translateX(-50%) translateY(0)'
+				$open:
+					transform: 'translateX(-50%) translateY(0)'
+					_:2
 
 		computers:
 			placement: (placement)-> @state "#{placement}Placement", on
