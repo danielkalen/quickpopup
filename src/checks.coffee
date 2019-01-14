@@ -1,5 +1,5 @@
 IS = import '@danielkalen/is'
-DOM = import 'quickdom'
+# DOM = import 'quickdom'
 
 module.exports = IS = IS.create('natives')
 IS.load

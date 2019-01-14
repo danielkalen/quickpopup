@@ -1,4 +1,4 @@
-DOM = import 'quickdom'
+# DOM = import 'quickdom'
 extend = import 'smart-extend'
 Popup = import './popup'
 IS = import './checks'

@@ -1,6 +1,6 @@
 promiseEvent = import 'p-event'
 promiseBreak = import 'promise-break'
-DOM = import 'quickdom'
+# DOM = import 'quickdom'
 IS = import './checks'
 template = import './template'
 helpers = import './helpers'
