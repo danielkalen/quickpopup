@@ -1,4 +1,4 @@
-module.exports = 
+export default
 	placement: 'center'
 	open: false
 	forceOpen: false

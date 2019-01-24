@@ -1,4 +1,4 @@
-# DOM = import 'quickdom'
+import DOM from 'quickdom'
 
 export popup = DOM.template(
 	['div'

@@ -1,10 +1,11 @@
-# DOM = import 'quickdom'
-extend = import 'smart-extend'
-Popup = import './popup'
-IS = import './checks'
-defaults = import './defaults'
-templates = import './template'
+import DOM from 'quickdom'
+import extend from 'smart-extend'
+import Popup from './popup'
+import IS from './checks'
+import defaults from './defaults'
+import * as templates from './template'
 import {html as htmlTemplate} from './template'
+import {version} from '../package.json'
 
 
 newBuilder = (defaults, templates)->
@@ -49,7 +50,7 @@ newBuilder = (defaults, templates)->
 	builder.wrapBody = ()-> Popup.wrapBody()
 	builder.unwrapBody = ()-> Popup.unwrapBody()
 	builder.destroyAll = ()-> Popup.destroyAll()
-	builder.version = import '../package.json $ version'
+	builder.version = version
 	builder.defaults = defaults
 	builder.templates = templates
 	return builder
@@ -58,8 +59,8 @@ newBuilder = (defaults, templates)->
 
 
 
-QuickPopup = newBuilder(defaults, templates)
-module.exports = QuickPopup
+quickpopup = newBuilder(defaults, templates)
+export default quickpopup
 
 
 

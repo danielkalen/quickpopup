@@ -1,8 +1,8 @@
-IS = import './checks'
-extend = import 'smart-extend'
-detectAnimation = import 'detect-animation-end-helper'
+import IS from './checks'
+import extend from 'smart-extend'
+import detectAnimation from 'detect-animation-end-helper'
 
-exports.extendSettings = (defaults, settings)->
+export extendSettings = (defaults, settings)->
 	extend
 		.filter
 			placement: IS.string
@@ -17,25 +17,25 @@ exports.extendSettings = (defaults, settings)->
 		.clone.deep.notDeep('content')(defaults, settings)
 
 
-exports.scheduleScrollReset = (scheduleNext)-> setTimeout ()->
+export scheduleScrollReset = (scheduleNext)-> setTimeout ()->
 	window.scroll(0,0)
 	
 	if scheduleNext
 		setTimeout ()->
-			exports.scheduleScrollReset()
+			scheduleScrollReset()
 		, scheduleNext
 
-exports.transitionEnd = ()->
+export transitionEnd = ()->
 	detectAnimation('transition')
 
-exports.scrollOffset = ()->
-	window.scrollY - exports.documentOffset()
+export scrollOffset = ()->
+	window.scrollY - documentOffset()
 
-exports.documentOffset = ()->
+export documentOffset = ()->
 	(document.body.getBoundingClientRect()?.top or 0) + window.scrollY
 
 
-exports.visibilityApiKeys = ()-> switch
+export visibilityApiKeys = ()-> switch
 	when IS.defined(document.hidden)
 		hidden:'hidden', visibilitychange:'visibilitychange'
 	
