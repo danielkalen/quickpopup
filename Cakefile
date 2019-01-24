@@ -8,7 +8,7 @@ Path = require 'path'
 MEASURE_LOG = './.config/measure.json'
 PACKAGE = './package.json'
 process.env.SOURCE_MAPS ?= 1
-buildModules = ['simplyimport@4.0.9','google-closure-compiler-js@20180610.0.0','uglify-js@3.0.24','babelify','@babel/preset-env','@babel/core']
+buildModules = ['@babel/preset-env','@babel/core']
 coverageModules = ['istanbul', 'badge-gen', 'coffee-coverage']
 testModules = ['@danielkalen/polyfills', 'mocha', 'chai', 'chai-dom', 'chai-style', 'chai-almost', 'chai-asserttype', 'chai-events']
 karmaModules = ['electron', 'karma@1.6.0', 'karma-chrome-launcher', 'karma-coverage', 'karma-electron', 'karma-firefox-launcher', 'karma-ie-launcher', 'karma-mocha', 'karma-opera-launcher', 'karma-safari-launcher', 'github:danielkalen/karma-sauce-launcher']
@@ -24,37 +24,31 @@ task 'build', ()->
 
 
 task 'build:js', (options)->
-	debug = if options.debug then '.debug' else ''
-	Promise.resolve()
-		.then ()-> invoke 'install:build'
-		.then ()-> {src:"src/index.coffee", dest:"build/quickpopup#{debug}.js"}
-		.tap ()-> console.log 'compiling js' unless global.silent
-		.then (file)-> compileJS(file, debug:options.debug, umd:'quickpopup', target:'browser')
-		.catch (err)-> console.error(err)
+	console.log 'bundling lib'
+	compileJS(require './.config/rollup.lib')
 
 task 'build:test', (options)->
-	Promise.resolve()
-		.then ()-> invoke 'install:build'
-		.then ()-> invoke 'install:test'
-		.tap ()-> console.log 'compiling test' unless global.silent
-		.then ()-> {src:"test/test.coffee", dest:"test/test.js"}
-		.then (file)-> compileJS(file, debug:options.debug, noPkgConfig:true)
-
+	console.log 'bundling test'
+	await invoke 'install:test'
+	compileJS(require './.config/rollup.test')
 
 
 
 task 'watch', ()->
 	Promise.resolve()
-		.then ()-> invoke 'install:watch'
+		.then ()-> invoke 'install:build'
 		.then ()->
 			invoke 'watch:js'
 			invoke 'watch:test'
 
+
+
 task 'watch:js', (options)->
-	watch "src/*.coffee", -> invoke 'build:js'
+	require('rollup').watch(require './.config/rollup.lib')
 
 task 'watch:test', (options)->
-	watch "test/*.coffee", -> invoke 'build:test'
+	require('rollup').watch(require './.config/rollup.test')
+
 
 
 
@@ -67,7 +61,6 @@ task 'install', ()->
 		.then ()-> invoke 'install:bench'
 
 task 'install:build', ()-> packageInstall buildModules
-task 'install:watch', ()-> packageInstall ['listr','simplywatch@3.0.0-l5']
 task 'install:test', ()-> packageInstall testModules
 task 'install:karma', ()-> packageInstall testModules.concat(karmaModules)
 task 'install:coverage', ()-> packageInstall coverageModules
@@ -81,7 +74,7 @@ task 'measure', (options)->
 		.then ()-> invoke 'install:measure'
 		.then ()->
 			DIR = if options.target then options.target else 'build'
-			measure {debug:"./#{DIR}/quickpopup.debug.js", release:"./#{DIR}/quickpopup.js"}
+			measure {debug:"./#{DIR}/quickpopup.js", release:"./#{DIR}/quickpopup.min.js"}
 
 
 
@@ -97,13 +90,16 @@ task 'measure', (options)->
 
 
 
+compileJS = (configs)->
+	rollup = require 'rollup'
 
+	for config,i in configs
+		console.log "bundling config ##{i+1} (#{config.input})"
+		bundle = await rollup.rollup(config)
 
-watch = (globs, command)->
-	global.silent = true
-	Promise.resolve()
-		# .then ()-> packageInstall 'simplywatch@3.0.0-l5'
-		.then ()-> require('simplywatch')({globs, command})
+		for dest in config.output
+			await bundle.write(dest)
+
 
 
 runTaskList = (tasks)->
@@ -137,20 +133,6 @@ measure = (file)->
 			console.log "#{chalk.dim 'RELEASE'} #{chalk.green results.release.gzip} (#{chalk.yellow results.release.orig})"
 			console.log '\n'
 
-
-compileJS = (file, options)->
-	Promise.resolve()
-		.then ()-> require('simplyimport')(extend {file:file.src, usePaths:options.debug, specific}, options)
-		.then (result)-> fs.writeAsync(file.dest, result)
-		.catch (err)->
-			console.error(err) if err not instanceof Error
-			throw err
-
-babelify = transform:['babelify', {presets:['@babel/preset-env'], sourceMaps:false}]
-specific = 
-	'p-event': babelify
-	'p-finally': babelify
-	'p-timeout': babelify
 
 
 

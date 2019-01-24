@@ -1,13 +1,14 @@
-promiseEvent = import 'p-event'
-promiseBreak = import 'promise-break'
-DOM = import 'quickdom'
-IS = import './checks'
-template = import './template'
-helpers = import './helpers'
-BROWSER = import './browser-info'
+import promiseEvent from 'p-event'
+import promiseBreak from 'promise-break'
+import DOM from 'quickdom'
+import IS from './checks'
+import * as template from './template'
+import * as helpers from './helpers'
+import * as BROWSER from './browser-info'
+import EventEmitter from 'event-lite'
 body = DOM(document.body)
 
-class Popup extends require('event-lite')
+class Popup extends EventEmitter
 	@instances: []
 	@hasOpen: false
 	@bodyWrapper: null
@@ -246,4 +247,4 @@ class Popup extends require('event-lite')
 
 
 
-module.exports = Popup
+export default Popup

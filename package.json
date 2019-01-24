@@ -3,22 +3,8 @@
   "version": "1.0.0",
   "description": "Fast & light modal popup creator providing rich configuration and styling",
   "main": "dist/quickpopup.js",
-  "browser": {
-    "./debug": "dist/quickpopup.debug.js",
-    "./dist/quickpopup.js": "src/index.coffee"
-  },
-  "browserify": {
-    "transform": [
-      "simplyimport/compat"
-    ]
-  },
-  "simplyimport": {
-    "finalTransform": [
-      ".config/transforms/minify-super",
-      ".config/transforms/minify-rename",
-      ".config/transforms/minify-simple"
-    ]
-  },
+  "module": "dist/quickpopup.esm.js",
+  "unpkg": "dist/quickpopup.min.js",
   "directories": {
     "test": "test"
   },
@@ -27,7 +13,7 @@
     "prepublishOnly": "npm run test",
     "postpublish": "git push",
     "watch": "cake -d watch",
-    "build": "cake -d build && cake build && cake measure && cp -r build/* dist/",
+    "build": "cake build && cake measure && cp -r build/* dist/",
     "test": "npm run test:browser -s || true",
     "test:travis": "npm run test:browser -s && npm run test:minified -s",
     "test:local": "open test/testrunner.html",
@@ -54,19 +40,26 @@
   },
   "homepage": "https://github.com/danielkalen/quickpopup#readme",
   "dependencies": {
-    "@danielkalen/is": "^2.0.0",
+    "@danielkalen/is": "^2.0.1",
     "detect-animation-end-helper": "^0.1.0",
     "event-lite": "^0.1.1",
     "p-event": "^1.3.0",
     "promise-break": "^0.1.2",
-    "quickdom": "^1.0.91",
-    "smart-extend": "^1.7.3"
+    "quickdom": "^1.0.92",
+    "smart-extend": "^1.7.4"
   },
   "devDependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^2.0.1",
-    "coffee-script": "^1.12.6",
+    "coffeescript": "^2.3.2",
     "fs-jetpack": "^0.13.3",
-    "package-install": "^1.0.0"
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-coffee-script": "^2.0.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^4.0.2",
+    "package-install": "^1.2.6"
   }
 }
