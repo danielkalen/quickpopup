@@ -1,4 +1,4 @@
-(function(g,f){typeof exports==='object'&&typeof module!=='undefined'?module.exports=f(require('quickdom'),require('smart-extend'),require('p-event'),require('promise-break'),require('@danielkalen/is'),require('detect-animation-end-helper'),require('event-lite')):typeof define==='function'&&define.amd?define(['quickdom','smart-extend','p-event','promise-break','@danielkalen/is','detect-animation-end-helper','event-lite'],f):(g=g||self,g.quickpopup=f(g.DOM,g.extend,g.promiseEvent,g.promiseBreak,g.IS_,g.detectAnimation,g.EventEmitter));}(this,function(DOM, extend, promiseEvent, promiseBreak, IS_, detectAnimation, EventEmitter){'use strict';DOM=DOM&&DOM.hasOwnProperty('default')?DOM['default']:DOM;extend=extend&&extend.hasOwnProperty('default')?extend['default']:extend;promiseEvent=promiseEvent&&promiseEvent.hasOwnProperty('default')?promiseEvent['default']:promiseEvent;promiseBreak=promiseBreak&&promiseBreak.hasOwnProperty('default')?promiseBreak['default']:promiseBreak;IS_=IS_&&IS_.hasOwnProperty('default')?IS_['default']:IS_;detectAnimation=detectAnimation&&detectAnimation.hasOwnProperty('default')?detectAnimation['default']:detectAnimation;EventEmitter=EventEmitter&&EventEmitter.hasOwnProperty('default')?EventEmitter['default']:EventEmitter;var IS;
+import DOM from'quickdom';import extend from'smart-extend';import promiseEvent from'p-event';import promiseBreak from'promise-break';import IS_ from'@danielkalen/is';import detectAnimation from'detect-animation-end-helper';import EventEmitter from'event-lite';var IS;
 IS = IS_.create('natives');
 IS.load({
   'domEl': DOM.isEl,
@@ -743,4 +743,4 @@ newBuilder = function (defaults$$1, templates) {
 };
 
 quickpopup = newBuilder(defaults, templates);
-var quickpopup$1 = quickpopup;return quickpopup$1;}));
+var quickpopup$1 = quickpopup;export default quickpopup$1;
