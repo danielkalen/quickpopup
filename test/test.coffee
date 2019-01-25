@@ -1,19 +1,26 @@
-@Popup = window.quickpopup
-@DOM = import 'quickdom'
-helpers = import './helpers'
-chai = import 'chai'
-chai.use(import 'chai-dom')
-chai.use(import 'chai-style')
-chai.use(import 'chai-almost')
-chai.use(import 'chai-asserttype')
-chai.use(import 'chai-events')
+# @Popup = window.quickpopup
+import Popup from '../build/quickpopup.esm.js'
+import DOM from 'quickdom'
+import * as helpers from './helpers'
+import {version as packageVersion} from '../package.json'
+import chai from 'chai'
+import chaiDom from 'chai-dom'
+import chaiStyle from 'chai-style'
+import chaiAlmost from 'chai-almost'
+import chaiAsserttype from 'chai-asserttype'
+import chaiEvents from 'chai-events'
+chai.use(chaiDom)
+chai.use(chaiStyle)
+chai.use(chaiAlmost)
+chai.use(chaiAsserttype)
+chai.use(chaiEvents)
 mocha.setup('tdd')
 mocha.slow(400)
 mocha.timeout(6000)
 mocha.bail() unless window.__karma__
 expect = chai.expect
 assert = chai.assert
-@sandbox = null
+window.sandbox = null
 
 
 
@@ -22,7 +29,6 @@ suite "QuickPopup", ()->
 	teardown(Popup.destroyAll)
 
 	test "Version Property", ()->
-		packageVersion = (import '../package $ version')
 		expect(Popup.version).to.equal(packageVersion)
 
 

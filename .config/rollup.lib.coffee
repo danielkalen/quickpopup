@@ -6,6 +6,7 @@ pkg.unpkg = pkg.unpkg.replace 'dist', 'build'
 
 onwarn = (warning, warn)->
 	return if warning.code is 'MISSING_GLOBAL_NAME'
+	return if warning.code is 'THIS_IS_UNDEFINED'
 	warn(warning)
 
 

@@ -1,10 +1,11 @@
-detectAnimation = import 'detect-animation-end-helper'
+import detectAnimation from 'detect-animation-end-helper'
+import DOM from 'quickdom'
 
-exports.supportsAnimation = ()-> !!detectAnimation()
+export supportsAnimation = ()-> !!detectAnimation()
 
-exports.transitionEnd = ()-> detectAnimation('transition')
+export transitionEnd = ()-> detectAnimation('transition')
 
-exports.restartSandbox = ()->
+export restartSandbox = ()->
 	window.sandbox.remove() if window.sandbox
 	window.sandbox = DOM.div id:'sandbox', style:
 		border: '1px solid'
