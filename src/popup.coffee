@@ -91,7 +91,7 @@ class Popup extends EventEmitter
 				@open('visibility') if document[hidden]
 
 		if @settings.triggers.open.exitIntent
-			DOM(document).on "mouseleave.#{@id}", (event)=>
+			DOM(document).on "mouseout.#{@id}", (event)=>
 				base = if BROWSER.isIE or BROWSER.isIE11 or BROWSER.isEdge then 110 else 0
 				threshold = @settings.yThreshold + base
 				@open('exitIntent') if event.clientY <= threshold
@@ -114,7 +114,7 @@ class Popup extends EventEmitter
 		
 		DOM(window).off "resize.#{@id}" if @settings.placement is 'center'
 		DOM(window).off "popstate.#{@id}" if @settings.triggers.open.navigation
-		DOM(document).off "mouseleave.#{@id}" if @settings.triggers.open.exitIntent
+		DOM(document).off "mouseout.#{@id}" if @settings.triggers.open.exitIntent
 		DOM(document).off "#{visibilitychange}.#{@id}" if @settings.triggers.open.visibility
 		DOM(document).off "keyup.#{@id}" if @settings.triggers.close.esc
 
