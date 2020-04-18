@@ -1,6 +1,6 @@
 {
   "name": "quickpopup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fast & light modal popup creator providing rich configuration and styling",
   "main": "dist/quickpopup.js",
   "module": "dist/quickpopup.esm.js",
