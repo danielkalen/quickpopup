@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/danielkalen/quickpopup#readme",
   "dependencies": {
+    "@babel/core": "^7.9.0",
     "@danielkalen/is": "^2.0.1",
     "detect-animation-end-helper": "^0.1.0",
     "event-lite": "^0.1.1",

@@ -1,4 +1,4 @@
-(function(g,f){typeof exports==='object'&&typeof module!=='undefined'?module.exports=f(require('quickdom'),require('smart-extend'),require('p-event'),require('promise-break'),require('@danielkalen/is'),require('detect-animation-end-helper'),require('event-lite')):typeof define==='function'&&define.amd?define(['quickdom','smart-extend','p-event','promise-break','@danielkalen/is','detect-animation-end-helper','event-lite'],f):(g=g||self,g.quickpopup=f(g.DOM,g.extend,g.promiseEvent,g.promiseBreak,g.IS_,g.detectAnimation,g.EventEmitter));}(this,function(DOM, extend, promiseEvent, promiseBreak, IS_, detectAnimation, EventEmitter){'use strict';DOM=DOM&&DOM.hasOwnProperty('default')?DOM['default']:DOM;extend=extend&&extend.hasOwnProperty('default')?extend['default']:extend;promiseEvent=promiseEvent&&promiseEvent.hasOwnProperty('default')?promiseEvent['default']:promiseEvent;promiseBreak=promiseBreak&&promiseBreak.hasOwnProperty('default')?promiseBreak['default']:promiseBreak;IS_=IS_&&IS_.hasOwnProperty('default')?IS_['default']:IS_;detectAnimation=detectAnimation&&detectAnimation.hasOwnProperty('default')?detectAnimation['default']:detectAnimation;EventEmitter=EventEmitter&&EventEmitter.hasOwnProperty('default')?EventEmitter['default']:EventEmitter;var IS;
+(function(g,f){typeof exports==='object'&&typeof module!=='undefined'?module.exports=f(require('quickdom'),require('smart-extend'),require('p-event'),require('promise-break'),require('@danielkalen/is'),require('detect-animation-end-helper'),require('event-lite')):typeof define==='function'&&define.amd?define(['quickdom','smart-extend','p-event','promise-break','@danielkalen/is','detect-animation-end-helper','event-lite'],f):(g=g||self,g.quickpopup=f(g.DOM,g.extend,g.promiseEvent,g.promiseBreak,g.IS_,g.detectAnimation,g.EventEmitter));}(this,(function(DOM, extend, promiseEvent, promiseBreak, IS_, detectAnimation, EventEmitter){'use strict';DOM=DOM&&Object.prototype.hasOwnProperty.call(DOM,'default')?DOM['default']:DOM;extend=extend&&Object.prototype.hasOwnProperty.call(extend,'default')?extend['default']:extend;promiseEvent=promiseEvent&&Object.prototype.hasOwnProperty.call(promiseEvent,'default')?promiseEvent['default']:promiseEvent;promiseBreak=promiseBreak&&Object.prototype.hasOwnProperty.call(promiseBreak,'default')?promiseBreak['default']:promiseBreak;IS_=IS_&&Object.prototype.hasOwnProperty.call(IS_,'default')?IS_['default']:IS_;detectAnimation=detectAnimation&&Object.prototype.hasOwnProperty.call(detectAnimation,'default')?detectAnimation['default']:detectAnimation;EventEmitter=EventEmitter&&Object.prototype.hasOwnProperty.call(EventEmitter,'default')?EventEmitter['default']:EventEmitter;var IS;
 IS = IS_.create('natives');
 IS.load({
   'domEl': DOM.isEl,
@@ -183,7 +183,7 @@ var html = DOM.template(['div', {
       return this.html = html;
     }
   }
-}]);var templates = /*#__PURE__*/Object.freeze({popup: popup,overlay: overlay,content: content,close: close,bodyWrapper: bodyWrapper,html: html});var extendSettings = function (defaults, settings) {
+}]);var templates=/*#__PURE__*/Object.freeze({__proto__:null,popup: popup,overlay: overlay,content: content,close: close,bodyWrapper: bodyWrapper,html: html});var extendSettings = function (defaults, settings) {
   return extend.filter({
     placement: IS$1.string,
     template: IS$1.objectPlain,
@@ -325,7 +325,7 @@ Popup = function () {
     }
 
     _createElements() {
-      var close$$1, config, content$$1, data, overlay$$1;
+      var close, config, content, data, overlay;
       data = {
         data: {
           content: this.content,
@@ -336,11 +336,11 @@ Popup = function () {
         relatedInstance: this
       };
       this.el = this.template.popup.spawn(data, config);
-      overlay$$1 = this.template.overlay.spawn(data, config).appendTo(this.el);
-      content$$1 = this.template.content.spawn(data, config).appendTo(this.el);
+      overlay = this.template.overlay.spawn(data, config).appendTo(this.el);
+      content = this.template.content.spawn(data, config).appendTo(this.el);
 
       if (this.settings.close.show) {
-        return close$$1 = this.template.close.spawn(data, config).appendTo(content$$1);
+        return close = this.template.close.spawn(data, config).appendTo(content);
       }
     }
 
@@ -356,12 +356,12 @@ Popup = function () {
     }
 
     _attachBindings() {
-      var close$$1, hidden, ref1, ref2, visibilitychange;
-      close$$1 = this.close.bind(this);
-      this.el.child.overlay.on('mouseup touchend', close$$1);
+      var close, hidden, ref1, ref2, visibilitychange;
+      close = this.close.bind(this);
+      this.el.child.overlay.on('mouseup touchend', close);
 
       if ((ref1 = this.el.child.close) != null) {
-        ref1.on('mouseup touchend', close$$1);
+        ref1.on('mouseup touchend', close);
       }
 
       if (this.settings.placement === 'center') {
@@ -395,7 +395,7 @@ Popup = function () {
       }
 
       if (this.settings.triggers.open.exitIntent) {
-        DOM(document).on(`mouseleave.${this.id}`, event => {
+        DOM(document).on(`mouseout.${this.id}`, event => {
           var base, threshold;
           base = isIE || isIE11 || isEdge ? 110 : 0;
           threshold = this.settings.yThreshold + base;
@@ -443,7 +443,7 @@ Popup = function () {
       }
 
       if (this.settings.triggers.open.exitIntent) {
-        DOM(document).off(`mouseleave.${this.id}`);
+        DOM(document).off(`mouseout.${this.id}`);
       }
 
       if (this.settings.triggers.open.visibility) {
@@ -510,7 +510,7 @@ Popup = function () {
           this._throwDestroyed();
         }
 
-        if (this.state.open || Popup.hasOpen && !this.settings.forceOpen || ++this.state.count >= this.settings.openLimit || window.innerWidth < this.settings.triggers.open.minWidth || this.settings.condition && !this.settings.condition()) {
+        if ( this.state.open || Popup.hasOpen && !this.settings.forceOpen || ++this.state.count >= this.settings.openLimit || window.innerWidth < this.settings.triggers.open.minWidth || this.settings.condition && !this.settings.condition()) {
           return promiseBreak();
         }
       }).then(() => {
@@ -520,12 +520,12 @@ Popup = function () {
         if (!Popup.hasOpen) {
           return this.state.offset = scrollOffset();
         } else {
-          openPopups = Popup.instances.filter(popup$$1 => {
-            return popup$$1 !== this && popup$$1.state.open;
+          openPopups = Popup.instances.filter(popup => {
+            return popup !== this && popup.state.open;
           });
-          return Promise.all(openPopups.map(popup$$1 => {
-            this.state.offset = popup$$1.state.offset;
-            return popup$$1.close(true);
+          return Promise.all(openPopups.map(popup => {
+            this.state.offset = popup.state.offset;
+            return popup.close(true);
           }));
         }
       }).then(() => {
@@ -659,14 +659,14 @@ var Popup$1 = Popup;var defaults = {
   }
 };var version = "1.0.0";var newBuilder, quickpopup;
 
-newBuilder = function (defaults$$1, templates) {
+newBuilder = function (defaults, templates) {
   var builder;
 
   builder = function (arg) {
 
     switch (false) {
       case arguments.length !== 0:
-        return new Popup$1(null, defaults$$1, templates);
+        return new Popup$1(null, defaults, templates);
 
       case typeof arg !== 'string':
         return new Popup$1({
@@ -675,21 +675,21 @@ newBuilder = function (defaults$$1, templates) {
               html: arg
             }
           })
-        }, defaults$$1, templates);
+        }, defaults, templates);
 
       case !DOM.isEl(arg):
       case !DOM.isQuickEl(arg):
         return new Popup$1({
           content: arg
-        }, defaults$$1, templates);
+        }, defaults, templates);
 
       case !DOM.isTemplate(arg):
         return new Popup$1({
           content: arg.spawn()
-        }, defaults$$1, templates);
+        }, defaults, templates);
 
       case !(arg && typeof arg === 'object'):
-        return new Popup$1(arg, defaults$$1, templates);
+        return new Popup$1(arg, defaults, templates);
 
       default:
         throw new Error('invalid argument provided to QuickPopup');
@@ -697,26 +697,26 @@ newBuilder = function (defaults$$1, templates) {
   };
 
   builder.config = function (newSettings, newTemplates) {
-    var name$$1, outputSettings, outputTemplates, template;
+    var name, outputSettings, outputTemplates, template;
 
     if (!IS$1.object(newSettings)) {
       throw new Error(`QuickPopup Config: invalid config object provided ${String(newSettings)}`);
     }
 
-    outputSettings = extend.clone.deep(defaults$$1, newSettings);
+    outputSettings = extend.clone.deep(defaults, newSettings);
 
     if (!IS$1.object(newTemplates)) {
       outputTemplates = templates;
     } else {
       outputTemplates = Object.create(null);
 
-      for (name$$1 in templates) {
-        template = templates[name$$1];
+      for (name in templates) {
+        template = templates[name];
 
-        if (newTemplates[name$$1]) {
-          outputTemplates[name$$1] = template.extend(newTemplates[name$$1]);
+        if (newTemplates[name]) {
+          outputTemplates[name] = template.extend(newTemplates[name]);
         } else {
-          outputTemplates[name$$1] = template;
+          outputTemplates[name] = template;
         }
       }
     }
@@ -737,10 +737,10 @@ newBuilder = function (defaults$$1, templates) {
   };
 
   builder.version = version;
-  builder.defaults = defaults$$1;
+  builder.defaults = defaults;
   builder.templates = templates;
   return builder;
 };
 
 quickpopup = newBuilder(defaults, templates);
-var quickpopup$1 = quickpopup;return quickpopup$1;}));
+var quickpopup$1 = quickpopup;return quickpopup$1;})));
