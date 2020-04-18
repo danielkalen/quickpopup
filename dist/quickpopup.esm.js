@@ -657,7 +657,7 @@ var Popup$1 = Popup;var defaults = {
       esc: true
     }
   }
-};var version = "1.0.0";var newBuilder, quickpopup;
+};var version = "1.0.1";var newBuilder, quickpopup;
 
 newBuilder = function (defaults, templates) {
   var builder;
